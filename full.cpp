@@ -252,10 +252,10 @@ pair<int,int> get_winner(Hand* players, int num_players) {
         }
     }
     if(checktie){
-        return {0,0};
+        return {0, max};
     }
 
-    return {winner,max}; 
+    return {winner+1,max}; 
 }
 
 void update_player_data(const string player_name, bool win, int hand_type){
@@ -264,16 +264,15 @@ void update_player_data(const string player_name, bool win, int hand_type){
     int games_played = 0, wins = 0;
     map<int, int> most_win_strategy;
     map<int, int, greater<int>> most_win_strategy2;
-    int type;
+    int type, cnt;
     int have_strategy = false;
 
     ifstream file_in(filename);
     if(file_in){
         file_in >> games_played >> wins;
          //remember that winrate will automatically calculate when you call it the calculus is 1.0*(wins/game_played)*100
-        while(file_in >> type){
-            int cnt;
-            file_in >> cnt; //I will store consequently in the txt file that: cardtype1 -> cnt of previous type (largest cnt) -> cardtype2 -> cnt of previous type (second largest)...
+        while(file_in >> type >> cnt){
+            //I will store consequently in the txt file that: cardtype1 -> cnt of previous type (largest cnt) -> cardtype2 -> cnt of previous type (second largest)...
             if(type == hand_type && win){
                 cnt++;
                 have_strategy = true;
@@ -299,7 +298,7 @@ void update_player_data(const string player_name, bool win, int hand_type){
     ofstream file_out(filename);
     file_out << games_played << ' ' << wins << ' ';
     for(auto x: most_win_strategy2){
-        file_out << x.second << ' ' << x.first;
+        file_out << x.second << ' ' << x.first << ' ';
     }
     file_out.close();
 }
@@ -307,7 +306,7 @@ void update_player_data(const string player_name, bool win, int hand_type){
 void update_playerlist(const string player_name, float win_rate){
     ifstream file_in("leadership.txt");
     multimap <float, string, greater<float>> store;
-    bool check_update;
+    bool check_update, check_change = false;
     if(file_in){
         float percent;
         string name;
@@ -329,7 +328,8 @@ void update_playerlist(const string player_name, float win_rate){
                     case 2:
                         if(check_update){
                             percent = win_rate;
-                            break;
+                            check_change = true;
+                            break;  
                         }
                         percent = stof(tmp);                        
                         break;
@@ -340,7 +340,7 @@ void update_playerlist(const string player_name, float win_rate){
         }
         file_in.close();
     }
-    if(!check_update){
+    if(!check_change){
         store.emplace(win_rate, player_name);
     }
 
@@ -383,6 +383,7 @@ int main() {
         //initializing name for n players
         for (int i = 0; i < number_player; i++){
             string name;
+            cout << "Nhap ten nguoi choi " << i+1 << " :";
             getline(cin, name);
             store_name.push_back(name);
             //check if the name that exist in the datafile or not
@@ -413,22 +414,26 @@ int main() {
             }
             cout<<"NEXT"<<endl;
         }
-        if(x.first==0 && x.second==0){
-            cout<<"TIE"<<endl;
-            return 0;
-        }
 
         bool wintype;
 
         for(int i = 0; i < number_player; i++){
             wintype = false;
-            if(i == winner_pos){
+            if((i + 1) == winner_pos){
+                wintype = true;
+            }
+            else if(winner_pos == 0){
                 wintype = true;
             }
             update_player_data(store_name[i], wintype, winner_strength);
             update_playerlist(store_name[i], get_win_rate(store_name[i]));
         }
-        cout<<"player "<<winner_pos+1<<" win"<<" "<<winner_strength<<endl;
+        if(x.first==0){
+            cout<<"TIE"<<endl;
+        }
+        else{
+            cout<<"player "<<winner_pos<<" win"<<" "<<winner_strength<<endl;
+        }
         cout<<"______________________________________________________"<<endl;
         cout<<"Play again or not (Y/N)";
         cin >> check;
