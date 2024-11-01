@@ -307,13 +307,14 @@ void update_player_data(const string player_name, bool win, int hand_type){
 void update_playerlist(const string player_name, float win_rate){
     ifstream file_in("leadership.txt");
     multimap <float, string, greater<float>> store;
-    bool check_update = false;
+    bool check_update;
     if(file_in){
         float percent;
         string name;
         string s;
         
         while(getline(file_in, s)){
+            check_update = false;
             stringstream ss(s);
             string tmp;
             int cnt = 1;
