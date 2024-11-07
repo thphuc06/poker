@@ -5,7 +5,7 @@
 #include <map>
 #include <fstream>
 #include <vector>
-#include <sstream>
+#include <sstream> //stringstream
 
 using namespace std;
 
@@ -52,22 +52,21 @@ struct point{
         Point["Hearts"]=2;
         Point["Diamonds"] = 1;
         Point["Clubs"]=0;
-        Point["3"]=4;
-        Point["4"]=5;
-        Point["5"]=6;
-        Point["6"]=7;
-        Point["7"]=8;
-        Point["8"]=9;
-        Point["9"]=10;
-        Point["10"]=11;
-        Point["J"]=12;
-        Point["Q"]=13;
-        Point["K"]=14;
-        Point["A"]=15;
-        Point["2"]=16;
+        Point["2"]=4;
+        Point["3"]=5;
+        Point["4"]=6;
+        Point["5"]=7;
+        Point["6"]=8;
+        Point["7"]=9;
+        Point["8"]=10;
+        Point["9"]=11;
+        Point["10"]=12;
+        Point["J"]=13;
+        Point["Q"]=14;
+        Point["K"]=15;
+        Point["A"]=16; 
     }
 }; 
-
 
 bool cmp(Card a, Card b){
     point p;
@@ -78,9 +77,12 @@ bool cmp(Card a, Card b){
 }
 
 bool straight_flush(Hand player){ //we check this first after check straight to assure that we do not miss any error
-    sort(player.cards,player.cards+5,cmp);
+    sort(player.cards,player.cards+5,cmp); //check card 1 2 3 4 5 case
     point p;
-    for(int i=1;i<5;i++){
+    if(player.cards[0].rank == "2" && player.cards[1].rank == "3" && player.cards[2].rank == "4" && player.cards[3].rank == "5" && player.cards[4].rank == "A"){
+        return true;
+    }
+    for(int i=1;i<5;i++){ // 3 4 5 6
         if(p.Point[player.cards[i].rank]!=p.Point[player.cards[i-1].rank]+1 || p.Point[player.cards[i].suit]!=p.Point[player.cards[i-1].suit] ){
             return false;
         }
@@ -88,13 +90,13 @@ bool straight_flush(Hand player){ //we check this first after check straight to 
     return true; 
 }
 
-bool four_of_a_kind(Hand player){
-    map<string,int>cnt;
+bool four_of_a_kind(Hand player){ //save the value of the four_of_kind for later comparison
+    map<string,int>cnt; //card type and frequency
     for(int i=0;i<5;i++){
-        cnt[player.cards[i].rank]++;
+        cnt[player.cards[i].rank]++; 
     }
-    for(auto x:cnt){
-        if(x.second==4){
+    for(auto x:cnt){ 
+        if(x.second==4){         
             return true;
         }
     }
@@ -102,7 +104,7 @@ bool four_of_a_kind(Hand player){
 }
 
 bool full_house(Hand player){ //remember to check this before check the three of a kind
-    map<string,int>cnt;
+    map<string,int>cnt; //save value of pair 2 and pair 3, for later comparison
     int note=0;
     for(int i=0;i<5;i++){
         cnt[player.cards[i].rank]++;
@@ -112,9 +114,9 @@ bool full_house(Hand player){ //remember to check this before check the three of
         if(x.second==3){
             check++;
         }
-        else if(x.second==2 && note==0){
+        else if(x.second==2 && note==0){ //2 doi 
             check++;
-            note=1;
+            note=1; //checkpoint
         }
     }
     if(check==2){
@@ -124,11 +126,11 @@ bool full_house(Hand player){ //remember to check this before check the three of
 }
 
 bool flush(Hand player){
-    map<string,int>cnt;
+    map<string,int>cnt; //card suit and frequency
     for(int i=0;i<5;i++){
         cnt[player.cards[i].suit]++;
     }
-    auto it=cnt.begin();
+    auto it=cnt.begin(); //iterator
     if(it->second==5){
         return true;
     }
@@ -137,7 +139,7 @@ bool flush(Hand player){
 
 bool straight(Hand player){ 
     sort(player.cards,player.cards+5,cmp);
-    point p;
+    point p; //1 2 3 4 5 
     for(int i=1;i<5;i++){
         if(p.Point[player.cards[i].rank]!=p.Point[player.cards[i-1].rank]+1){
             return false;
@@ -146,8 +148,8 @@ bool straight(Hand player){
     return true; 
 }
 
-bool three_of_a_kind(Hand player){
-    map<string,int>cnt;
+bool three_of_a_kind(Hand player){ //save the value of three_of_kind for later comparison
+    map<string,int>cnt; //first type, second frequency
     point p;
     for(int i=0;i<5;i++){
         cnt[player.cards[i].rank]++;
@@ -160,8 +162,8 @@ bool three_of_a_kind(Hand player){
     return false;
 }
 
-bool two_pair(Hand player){
-    map<string,int>cnt;
+bool two_pair(Hand player){ //save 2 pair and save it in descending 
+    map<string,int>cnt; 
     point p;
     for(int i=0;i<5;i++){
         cnt[player.cards[i].rank]++;
@@ -178,7 +180,7 @@ bool two_pair(Hand player){
     return false;
 }
 
-bool one_pair(Hand player){
+bool one_pair(Hand player){//save 1 pair
     map<string,int>cnt;
     point p;
     for(int i=0;i<5;i++){
@@ -196,18 +198,59 @@ bool one_pair(Hand player){
     return false;
 }
 
-int compare_hand(Hand a, Hand b){
-    sort(a.cards,a.cards+5,cmp);
-    sort(b.cards,b.cards+5,cmp);
-    for(int i=4;i>=0;i--){
-        if(a.cards[i].rank<b.cards[i].rank){
+int compare_hand(Hand a, Hand b){ //hand array[5]
+    sort(a.cards,a.cards+5,cmp); //sort hand 1
+    sort(b.cards,b.cards+5,cmp); //tang dan
+    point pnt;
+    for(int i=4;i>=0;i--){ 
+        if(pnt.Point[a.cards[i].rank] < pnt.Point[b.cards[i].rank]){ //
             return 2;
         }
-        else if(a.cards[i].rank>b.cards[i].rank){
+        else if(pnt.Point[a.cards[i].rank] > pnt.Point[b.cards[i].rank]){
             return 1;
         }
     }
-    return 0;
+    return 0; //draw 
+}
+
+
+/*
+-I will make this function to ensure the edge case if 2 hand have the same card strength, and they have pairs
+-The function will return a pair {pair 1, pair 2}, why it have pair 2 because I want to hold the pair of 2 and pair of 3 when full_house occur, 
+    if not just save as {pair1, 0} so that when compare 0 = 0 and does not affect the result.
+-This function will be call when two hand card strength is equal, when the strength is:
+8 : save the pair of 4
+7 : save the pair of 3 and pair of 2
+4 : save the pair of 3
+3 : save the max of 2 pair
+2 : save the value of 1 pair
+-when 2 card strength is equal -> call this function to get the value of recent card for comparison (in the get_winner function, get the winner_pos for access player card)
+after that 
+*/
+
+pair<int,pair<int,int>> take_pair(Hand a){
+    pair <int,pair<int,int>> res = {0,{0,0}};
+    map <string, int> store;
+    point p;
+    for(int i = 0; i < 5; i++){
+        store[a.cards[i].rank]++;
+    }
+    for(auto x : store){
+        if(x.second == 3){
+            res.first = p.Point[x.first];
+        }
+        else if(x.second == 2 || x.second == 4){
+            int tmp = res.second.first;
+            if(p.Point[x.first] > res.second.first){
+                res.second.second = res.second.first;
+                res.second.first = p.Point[x.first];
+            }
+            else{
+                res.second.second = p.Point[x.first];
+            }
+        }
+    }
+    return res;
 }
 
 //we must check the edge cases that the hand return same point.
@@ -215,7 +258,7 @@ int compare_hand(Hand a, Hand b){
 //if we reach the difference đầu tiên của 2 bộ bài về mặt rank thì so sánh cái nào lớn hơn thì win.
 //nhưng nếu các rank bài y chang nhau thì là hòa.
 
-int check_strength(Hand hand) {
+int check_strength(Hand hand) { //tao enum o tren, xai switch case
     if (straight_flush(hand)) return 9;   
     else if (four_of_a_kind(hand)) return 8;    
     else if (full_house(hand)) return 7;    
@@ -223,56 +266,86 @@ int check_strength(Hand hand) {
     else if (straight(hand)) return 5;         
     else if (three_of_a_kind(hand)) return 4;   
     else if (two_pair(hand)) return 3;          
-    else if (one_pair(hand)){ cout << "One Pair detected, returning 2 points." << endl;return 2;}        
+    else if (one_pair(hand)) return 2;      
     return 1;                                 
 }
 
-pair<int,int> get_winner(Hand* players, int num_players) {
-    int max= 0;
-    int winner = 0;
+pair<int,int> get_winner(Hand* players, int num_players) { //pointer to player[num_players]
+    int max= 0;//luu diem cao nhat
+    int winner = 0;//luu player_pos
     int strength;
-    bool checktie=false;
+    bool checktie=false; //check hoa
 
     for (int i = 0; i < num_players; ++i) {
-        strength = check_strength(players[i]);
+        strength = check_strength(players[i]); //hand 0
         if (strength > max) {
             max = strength;
             winner = i;
             checktie=false;
         }
         else if(strength == max){
-            int checkpnt = compare_hand(players[winner],players[i]);
-            if(checkpnt==2){
+            pair <int,pair<int,int>> winner_tmp;
+            pair <int,pair<int,int>> recent_player;
+            
+            winner_tmp = take_pair(players[winner]); //checking the pair before 
+            recent_player = take_pair(players[i]);
+            if(winner_tmp.first < recent_player.first){
+                max = strength;
+                winner = i;
+                checktie = false;
+                cout<<"checkdebug";
+                continue;
+            }
+            else if(winner_tmp.second.first < recent_player.second.first){ //checking if it have full_house (pair of 3 and 2)
+                max = strength;
+                winner = i;
+                checktie = false;
+                cout<<"checkdebug";
+                continue;
+            }
+            else if(winner_tmp.second.second < recent_player.second.second){
+                max = strength;
+                winner = i;
+                checktie = false;
+                cout<<"checkdebug";
+                continue;
+            }
+
+            int checkpnt = compare_hand(players[winner],players[i]); // max truoc do vs thang hien tai
+
+            if(checkpnt==2){ // max hien tai > max truoc do
                 max=strength;
-                winner=i;
+                winner=i; 
+                checktie = false;
             }
             else if(checkpnt==0){
-                checktie=true;
+                checktie=true; // checkpoint hoa
             }
         }
     }
+
     if(checktie){
-        return {0, max};
+        return {0, max}; // pair la {0,max};
     }
 
-    return {winner+1,max}; 
+    return {winner+1,max}; // {1,max}
 }
 
 void update_player_data(const string player_name, bool win, int hand_type){
-    string filename = "player_" + player_name + ".txt";
+    string filename = "player_" + player_name + ".txt"; //player_danh.txt
     int favorite_hand; 
     int games_played = 0, wins = 0;
     map<int, int> most_win_strategy;
-    map<int, int, greater<int>> most_win_strategy2;
+    multimap<int, int, greater<int>> most_win_strategy2; //sap xep dua 
     int type, cnt;
     int have_strategy = false;
 
-    ifstream file_in(filename);
-    if(file_in){
-        file_in >> games_played >> wins;
+    ifstream file_in(filename); //mở file
+    if(file_in){ //check coi co chua 
+        file_in >> games_played >> wins; //lấy dữ liệu cũ
          //remember that winrate will automatically calculate when you call it the calculus is 1.0*(wins/game_played)*100
-        while(file_in >> type >> cnt){
-            //I will store consequently in the txt file that: cardtype1 -> cnt of previous type (largest cnt) -> cardtype2 -> cnt of previous type (second largest)...
+        while(file_in >> type >> cnt){ 
+            //I will store consequently in the txt file that: cardtype1 -> cnt of previous type (largest cnt) -> cardtype2 -> cnt of previous type (second largest)...        
             if(type == hand_type && win){
                 cnt++;
                 have_strategy = true;
@@ -286,7 +359,7 @@ void update_player_data(const string player_name, bool win, int hand_type){
     
 
     for(auto x: most_win_strategy){
-        most_win_strategy2[x.second] = x.first;
+        most_win_strategy2.emplace(x.second,x.first);
     }
 
     games_played++;
@@ -410,9 +483,9 @@ int main() {
 
         for(int i=0;i<number_player;i++){
             for(auto x:p[i].cards){
-                cout<<x.suit<<" "<<x.rank<<endl;
+                cout<<x.suit<<" "<<x.rank<<" ";
             }
-            cout<<"NEXT"<<endl;
+            cout<<endl;
         }
 
         bool wintype;
