@@ -6,8 +6,8 @@ void shuffle_cards(Card deck[], int n)
     srand(time(0));
     for (int i = 0; i < n; ++i)
     {
-        int r = i + rand() % (n - i); // ha`m na`y co´ nghi~a la` cho?n ngâ~u nhiên 1 sô´ di tu` i->(n-i-1)+i
-        swap(deck[i], deck[r]);
+        int r = i + rand() % (n - i); // pick randomly number from i->(n-i-1)+i
+        swap(deck[i], deck[r]); //https://www.w3schools.com/cpp/cpp_howto_random_number.asp
     }
 }
 
@@ -48,21 +48,21 @@ point::point()
     Point["queen"] = 14;
     Point["king"] = 15;
     Point["ace"] = 16;
-} point p;
+}
+point p;
 
 bool cmp(Card a, Card b)
 {
     int rankA = p.Point[a.rank];
     int rankB = p.Point[b.rank];
 
-    if (rankA != rankB) {
+    if (rankA != rankB)
+    {
         return rankA < rankB;
     }
 
     return p.Point[a.suit] < p.Point[b.suit];
 }
-
-
 
 bool straight_flush(Hand player)
 {                                              // we check this first after check straight to assure that we do not miss any error
@@ -144,7 +144,7 @@ bool flush(Hand player)
 bool straight(Hand player)
 {
     sort(player.cards, player.cards + 5, cmp);
-     // 1 2 3 4 5
+    // 1 2 3 4 5
     for (int i = 1; i < 5; i++)
     {
         if (p.Point[player.cards[i].rank] != p.Point[player.cards[i - 1].rank] + 1)
@@ -158,7 +158,7 @@ bool straight(Hand player)
 bool three_of_a_kind(Hand player)
 {                         // save the value of three_of_kind for later comparison
     map<string, int> cnt; // first type, second frequency
-    
+
     for (int i = 0; i < 5; i++)
     {
         cnt[player.cards[i].rank]++;
@@ -176,7 +176,7 @@ bool three_of_a_kind(Hand player)
 bool two_pair(Hand player)
 { // save 2 pair and save it in descending
     map<string, int> cnt;
-    
+
     for (int i = 0; i < 5; i++)
     {
         cnt[player.cards[i].rank]++;
@@ -199,7 +199,7 @@ bool two_pair(Hand player)
 bool one_pair(Hand player)
 { // save 1 pair
     map<string, int> cnt;
-    
+
     for (int i = 0; i < 5; i++)
     {
         cnt[player.cards[i].rank]++;
@@ -223,17 +223,19 @@ int compare_hand(Hand a, Hand b)
 {                                    // hand array[5]
     sort(a.cards, a.cards + 5, cmp); // sort hand 1
     sort(b.cards, b.cards + 5, cmp); // tang dan
-    
-    for (int i = 0; i < 5; i++) {
+
+    for (int i = 0; i < 5; i++)
+    {
         cout << a.cards[i].rank << " ";
     }
     cout << endl;
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; i++)
+    {
         cout << b.cards[i].rank << " ";
     }
 
     for (int i = 4; i >= 0; i--)
-    {   
+    {
         if (p.Point[a.cards[i].rank] < p.Point[b.cards[i].rank])
         { //
             return 2;
@@ -264,7 +266,7 @@ pair<int, pair<int, int>> take_pair(Hand a)
 {
     pair<int, pair<int, int>> res = { 0, {0, 0} };
     map<string, int> store;
-    
+
     for (int i = 0; i < 5; i++)
     {
         store[a.cards[i].rank]++;
@@ -320,32 +322,35 @@ int check_strength(Hand hand)
 
 string type_of_card(int score)
 {
-    switch (score) {
-        case 1:
-            return "Normal";
-        case 2:
-            return "one pair";
-        case 3:
-            return "two pair";
-        case 4:
-            return "three of a kind";
-        case 5:
-            return "straight";
-        case 6:
-            return "flush";
-        case 7:
-            return "full house";
-        case 8:
-            return "four of a kind";
-        case 9:
-            return "straight flush";
+    switch (score)
+    {
+    case 1:
+        return "Normal";
+    case 2:
+        return "one pair";
+    case 3:
+        return "two pair";
+    case 4:
+        return "three of a kind";
+    case 5:
+        return "straight";
+    case 6:
+        return "flush";
+    case 7:
+        return "full house";
+    case 8:
+        return "four of a kind";
+    case 9:
+        return "straight flush";
     }
+    return "";
 }
 
-pair<int, int> get_winner(Hand* players, int num_players)
+pair<pair<int, int>,int> get_winner(Hand* players, int num_players)
 {                   // pointer to player[num_players]
     int max = 0;    // luu diem cao nhat
     int winner = 0; // luu player_pos
+    int winner_draw = 0;
     int strength;
     bool checktie = false; // check hoa
 
@@ -370,7 +375,7 @@ pair<int, int> get_winner(Hand* players, int num_players)
                 max = strength;
                 winner = i;
                 checktie = false;
-          
+
                 cout << "checkdebug (three-of-a-kind comparison)";
             }
             else if (winner_tmp.first == recent_player.first && winner_tmp.second.first < recent_player.second.first) // Compare the first pair
@@ -392,23 +397,13 @@ pair<int, int> get_winner(Hand* players, int num_players)
             }
             else if (winner_tmp.first == recent_player.first && winner_tmp.second.first == recent_player.second.first && winner_tmp.second.second == recent_player.second.second)
             {
-                int checkpnt = compare_hand(players[winner], players[i]);
-                if (checkpnt == 2) // The current player's hand is better
-                {
-                    max = strength;
-                    winner = i;
-                    checktie = false;
-                    cout << "outplay card at same strength";
-                }
-                else if (checkpnt == 0) // Hands are identical
-                {
-                    checktie = true;
-                }
-            }
 
-            else if (winner_tmp.first == recent_player.first && winner_tmp.second.first == recent_player.second.first && winner_tmp.second.second == recent_player.second.second) {
-                
                 int checkpnt = compare_hand(players[winner], players[i]); // max truoc do vs thang hien tai
+
+                /*
+                * remember if it have same pair, do not use it as a kicker for checking one more time, we must delete it out 
+                * but in this code, it may be redundant but it actually covers this checking step since I have tested all test case
+                */
 
                 if (checkpnt == 2)
                 { // max hien tai > max truoc do
@@ -420,18 +415,19 @@ pair<int, int> get_winner(Hand* players, int num_players)
                 else if (checkpnt == 0)
                 {
                     checktie = true; // checkpoint hoa
+                    winner_draw = i;
                 }
             }
-            //thêm else ở đây vô, tránh trường hợp so sánh tiếp khi đôi trước đó lớn hơn đôi hiện tại.
+            // thêm else ở đây vô, tránh trường hợp so sánh tiếp khi đôi trước đó lớn hơn đôi hiện tại.
         }
     }
 
     if (checktie)
     {
-        return { 0, max }; // pair la {0,max};
+        return {{winner + 1, winner_draw + 1}, max}; // if draw get 2 position for display and update score
     }
 
-    return { winner + 1, max }; // {1,max}
+    return { {winner + 1, -1}, max }; // make sure that pair position in the second must be -1 for further checking func
 }
 
 void update_player_data(const string player_name, bool win, int hand_type)
@@ -446,8 +442,8 @@ void update_player_data(const string player_name, bool win, int hand_type)
 
     ifstream file_in(filename); //
     if (file_in)
-    {                                    // check coi co chua
-        file_in >> games_played >> wins; 
+    { // check coi co chua
+        file_in >> games_played >> wins;
         // remember that winrate will automatically calculate when you call it the calculus is 1.0*(wins/game_played)*100
         while (file_in >> type >> cnt)
         {
@@ -486,11 +482,11 @@ void update_player_data(const string player_name, bool win, int hand_type)
     file_out.close();
 }
 
-void update_playerlist(const string player_name, float win_rate)
+void update_player_win_rate(const string player_name, float win_rate)
 {
-    ifstream file_in("C:/HCMUS/vspoker/leadershipboard/leadership.txt");
-    multimap<float, string, greater<float>> store;
-    bool check_update, check_change = false;
+    ifstream file_in("C:/HCMUS/vspoker/Leaderboard/leaderboard.txt");
+    multimap<float, string, greater<float>> store; //use multimap for avoiding deleting player with same winrate
+    bool check_change = false;
     if (file_in)
     {
         float percent;
@@ -499,33 +495,44 @@ void update_playerlist(const string player_name, float win_rate)
 
         while (getline(file_in, s))
         {
-            check_update = false;
             stringstream ss(s);
-            string tmp;
+            string tmp = "";
             int cnt = 1;
-            while (getline(ss, tmp, '-'))
-            { // this mean I will store in the leadership text: name - winrate \n name - winrate ....
-                switch (cnt)
-                {
-                case 1:
-                    name = tmp;
-                    if (name == player_name)
-                    {
-                        check_update = true;
-                    }
-                    break;
-                case 2:
-                    if (check_update)
-                    {
-                        percent = win_rate;
-                        check_change = true;
-                        break;
-                    }
-                    percent = stof(tmp);
-                    break;
-                }
-                cnt++;
+
+            //while (getline(ss, tmp, '-'))
+            //{ // this mean I will store in the leadership text: name - winrate \n name - winrate ....
+            //    switch (cnt)
+            //    {
+            //    case 1:
+            //        name = tmp;
+            //        if (name == player_name)
+            //        {
+            //            check_update = true; //if you find ...
+            //        }
+            //        break;
+            //    case 2:
+            //        if (check_update)
+            //        {
+            //            percent = win_rate;
+            //            check_change = true; 
+            //            break;
+            //        }
+            //        percent = stof(tmp);
+            //        break;
+            //    }
+            //    cnt++;
+            //}
+
+            getline(ss, tmp, '-');
+            name = tmp;
+            if (name == player_name) {
+                check_change = true;
+                percent = win_rate;
+                store.emplace(percent, name);
+                continue;
             }
+            ss >> percent;
+
             store.emplace(percent, name);
         }
         file_in.close();
@@ -535,7 +542,54 @@ void update_playerlist(const string player_name, float win_rate)
         store.emplace(win_rate, player_name);
     }
 
-    ofstream file_out("C:/HCMUS/vspoker/leadershipboard/leadership.txt");
+    ofstream file_out("C:/HCMUS/vspoker/Leaderboard/leaderboard.txt");
+    for (auto x : store)
+    {
+        file_out << x.second << '-' << x.first << endl;
+    }
+    file_out.close();
+}
+
+void update_player_win_game(const string player_name, int win_game) { //read the file of leadership_win_game and check if it match the name update the win_game, else append in the map for sorting win_game.
+    //I will store in the file:    name-wingame \n name-wingaem \n with descending order so that the top 1 will at first for easy graphic designing.
+    ifstream file_in("C:/HCMUS/vspoker/Leaderboard/leaderboard_win_rate.txt");
+
+    multimap<int, string, greater<int>>store;
+
+    bool check_update = false;
+    string s;
+    string name;
+    int wins;
+
+    while (getline(file_in, s)) { //use s for catching full line
+        string tmp = "";
+        
+        stringstream ss(s); 
+
+        getline(ss, tmp, '-');
+        name = tmp;
+        
+        if (name == player_name) {
+            wins = win_game;
+
+            check_update = true;
+
+            store.emplace(wins, name);
+
+        }
+        else
+        {
+            ss >> wins;
+
+            store.emplace(wins, name);
+        }
+    }
+    file_in.close();
+    if (!check_update) {
+        store.emplace(win_game, player_name);
+    }
+
+    ofstream file_out("C:/HCMUS/vspoker/Leaderboard/leaderboard_win_rate.txt");
     for (auto x : store)
     {
         file_out << x.second << '-' << x.first << endl;
@@ -545,7 +599,7 @@ void update_playerlist(const string player_name, float win_rate)
 
 float get_win_rate(const string player_name)
 {
-    string filename = "player_" + player_name + ".txt";
+    string filename = "C:/HCMUS/vspoker/userprofile/player_" + player_name + ".txt";
     ifstream file_in(filename);
     int games_play = 0, wins = 0;
     if (file_in)
@@ -558,4 +612,17 @@ float get_win_rate(const string player_name)
         return 0.0; // Return 0% win rate if no games have been played
     }
     return (1.0 * wins / games_play) * 100;
+}
+
+int get_win_game(const string player_name)
+{
+    string filename = "C:/HCMUS/vspoker/userprofile/player_" + player_name + ".txt";
+    ifstream file_in(filename);
+    int games_play = 0, wins = 0;
+    if (file_in)
+    {
+        file_in >> games_play >> wins;
+        file_in.close();
+    }
+    return wins;
 }
