@@ -51,7 +51,7 @@ point::point()
 }
 point p;
 
-bool cmp(Card a, Card b)
+static bool cmp(Card a, Card b)
 {
     int rankA = p.Point[a.rank];
     int rankB = p.Point[b.rank];
@@ -432,8 +432,8 @@ pair<pair<int, int>,int> get_winner(Hand* players, int num_players)
 
 void update_player_data(const string player_name, bool win, int hand_type)
 {
-    string filename = "C:/HCMUS/vspoker/userprofile/player_" + player_name + ".txt"; // player_danh.txt
-    int favorite_hand;
+    string filename = "userprofile/player_" + player_name + ".txt"; // player_danh.txt
+    int favorite_hand = 0;
     int games_played = 0, wins = 0;
     map<int, int> most_win_strategy;
     multimap<int, int, greater<int>> most_win_strategy2; // sap xep dua
@@ -484,7 +484,7 @@ void update_player_data(const string player_name, bool win, int hand_type)
 
 void update_player_win_rate(const string player_name, float win_rate)
 {
-    ifstream file_in("C:/HCMUS/vspoker/Leaderboard/leaderboard.txt");
+    ifstream file_in("Leaderboard/leaderboard.txt");
     multimap<float, string, greater<float>> store; //use multimap for avoiding deleting player with same winrate
     bool check_change = false;
     if (file_in)
@@ -542,7 +542,7 @@ void update_player_win_rate(const string player_name, float win_rate)
         store.emplace(win_rate, player_name);
     }
 
-    ofstream file_out("C:/HCMUS/vspoker/Leaderboard/leaderboard.txt");
+    ofstream file_out("Leaderboard/leaderboard.txt");
     for (auto x : store)
     {
         file_out << x.second << '-' << x.first << endl;
@@ -552,7 +552,7 @@ void update_player_win_rate(const string player_name, float win_rate)
 
 void update_player_win_game(const string player_name, int win_game) { //read the file of leadership_win_game and check if it match the name update the win_game, else append in the map for sorting win_game.
     //I will store in the file:    name-wingame \n name-wingaem \n with descending order so that the top 1 will at first for easy graphic designing.
-    ifstream file_in("C:/HCMUS/vspoker/Leaderboard/leaderboard_win_rate.txt");
+    ifstream file_in("Leaderboard/leaderboard_win_rate.txt");
 
     multimap<int, string, greater<int>>store;
 
@@ -589,7 +589,7 @@ void update_player_win_game(const string player_name, int win_game) { //read the
         store.emplace(win_game, player_name);
     }
 
-    ofstream file_out("C:/HCMUS/vspoker/Leaderboard/leaderboard_win_rate.txt");
+    ofstream file_out("Leaderboard/leaderboard_win_rate.txt");
     for (auto x : store)
     {
         file_out << x.second << '-' << x.first << endl;
@@ -599,7 +599,7 @@ void update_player_win_game(const string player_name, int win_game) { //read the
 
 float get_win_rate(const string player_name)
 {
-    string filename = "C:/HCMUS/vspoker/userprofile/player_" + player_name + ".txt";
+    string filename = "userprofile/player_" + player_name + ".txt";
     ifstream file_in(filename);
     int games_play = 0, wins = 0;
     if (file_in)
@@ -616,7 +616,7 @@ float get_win_rate(const string player_name)
 
 int get_win_game(const string player_name)
 {
-    string filename = "C:/HCMUS/vspoker/userprofile/player_" + player_name + ".txt";
+    string filename = "userprofile/player_" + player_name + ".txt";
     ifstream file_in(filename);
     int games_play = 0, wins = 0;
     if (file_in)

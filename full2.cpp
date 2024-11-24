@@ -4,12 +4,13 @@
 vector<Card2> createDeck2() {
     vector<Card2> deck;
     for (int suit = HEARTS2; suit <= SPADES2; suit++) {
-        for (int rank = ACE2; rank <= KING2; rank++) {
-            deck.push_back({ static_cast<Rank2>(rank), static_cast<Suit2>(suit) });
+        for (int rank = ACE2; rank <= KING2; rank++) { // Start from TWO2 to ACE2
+            deck.push_back(Card2{ static_cast<Rank2>(rank), static_cast<Suit2>(suit) });
         }
     }
     return deck;
 }
+
 
 // shuffle deck
 void shuffleDeck2(vector<Card2>& deck) {
@@ -36,7 +37,7 @@ int calculateScore2(const vector<Card2>& hand) {
     }
 
     // Case "bu" (10, 20, 30 scores)
-    if (sum % 10 == 0) {
+    if (sum % 10 == 0) { 
         return -1; // "Bu" has value is -1
     }
 

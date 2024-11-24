@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef GAME_H
-#define GAME_H
-
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
@@ -95,4 +92,3 @@ int get_win_game(const string player_name);
 int check_strength(Hand hand);  // Returns numerical value representing hand strength
 pair<int, pair<int, int>> take_pair(Hand a);  // Identifies pairs in a hand
 
-#endif
