@@ -282,7 +282,7 @@ int main()
     favorite_card_text.setString("Favorite card win");
 
     // track player profile button
-    sf::RectangleShape profile_search_button(sf::Vector2f(500, 50));
+    sf::RectangleShape profile_search_button(sf::Vector2f(350, 50));
     profile_search_button.setFillColor(sf::Color::Red);
     profile_search_button.setPosition(1095, 115);
 
@@ -392,7 +392,7 @@ int main()
     sf::Text fold_or_not;
     fold_or_not.setFont(font);
     fold_or_not.setCharacterSize(50);
-    fold_or_not.setPosition(500, 50);
+    fold_or_not.setPosition(350, 50);
     fold_or_not.setFillColor(sf::Color::Red);
 
     sf::RectangleShape opt1(sf::Vector2f(200, 80));
@@ -457,11 +457,25 @@ int main()
 
     sf::Sound press_button_play_sound(press_button_play);
 
-    sf::Music game_mode_1;
 
+
+    sf::Music game_mode_1;
     if (!game_mode_1.openFromFile("sound_effect/soft-piano-loop-192098.mp3"))
     {
         cout << "cannot load sound mode 1";
+        return -1;
+    }
+
+    //music holdem 
+    sf::Music game_mode_3;
+    if (!game_mode_3.openFromFile("sound_effect/game-music-loop-6-144641.mp3")) {
+        cout << "cannot open music";
+        return -1;
+    }
+
+    sf::Music game_mode_leadership;
+    if (!game_mode_leadership.openFromFile("sound_effect/game-music-loop-3-144252.mp3")) {
+        cout << "cannot open music";
         return -1;
     }
 
@@ -505,6 +519,9 @@ int main()
                             check_register = true;
                             display_player_profile = false;
                             isTypingPlayer = false;
+
+                            music_entry.stop();
+                            game_mode_leadership.play();
                             continue;
                         }
                     }
@@ -516,6 +533,7 @@ int main()
                         {
                             mode2_check = true;
                             check_register = true;
+                            mode_chosing_sound.play();
                             continue;
                         }
                     }
@@ -529,6 +547,9 @@ int main()
                             /*check_register = true;*/
                             gameplay = true;
                             isGameStarted = true;
+                            music_entry.stop();
+                            game_mode_3.play();
+                            mode_chosing_sound.play();
                             continue;
                         }
                     }
@@ -545,6 +566,9 @@ int main()
                             cout << "RETURN CLICK";
                             check_register = false;
                             check_leaderboard = false;
+
+                            game_mode_leadership.stop();
+                            music_entry.play();
                         }
                     }
                     if (event.MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
@@ -562,6 +586,7 @@ int main()
                         {
                             isTypingPlayer = true;
                             display_player_profile = false;
+                            press_button_sound.play();
                         }
                     }
                     if (isTypingPlayer)
@@ -601,6 +626,8 @@ int main()
                             check_register = false;
                             check_leaderboard = false;
                             check_change_leaderboard = false;
+                            game_mode_leadership.stop();
+                            music_entry.play();
                         }
                     }
                 }
@@ -634,14 +661,15 @@ int main()
                         { // Enter key
                             if (!isEnteringPlayers)
                             { // entering number of player 1 time
-                                if (!inputString.empty())
+                                if (!inputString.empty() && stoi(inputString) >= 2 && stoi(inputString) <= 4 )
                                 {
                                     number_player = stoi(inputString);
                                     isEnteringPlayers = true;                                                        // checkpoint never turn to this again
                                     promptText.setString("Enter player name " + to_string(currentPlayer + 1) + ":"); // change the promptest to enter player name
                                     inputString.clear();
                                 }
-                                // store the number of player
+                                inputString.clear();
+                                // store the number of player  
                             }
                             else
                             {
@@ -675,14 +703,14 @@ int main()
                             if (!isEnteringPlayers)
                             { // entering number of player 1 time
                                 if (!inputString.empty())
-                                {
-                                    number_player_2 = stoi(inputString);
-                                    if (number_player_2 >= 2 && number_player_2 <= 6)
-                                    {
+                                {   
+                                    if (stoi(inputString) >= 2 && stoi(inputString) <= 6) {
+                                        number_player_2 = stoi(inputString);
                                         checkButton = true;
                                         isEnteringPlayers = true;
                                         promptText.setString("Click 'Play' to start the game");
                                     }
+
                                     inputString.clear();
                                 }
                             }
@@ -946,7 +974,7 @@ int main()
         else if (gameplay)
         {
             if (mode3_check)
-            {
+            {   
                 window.draw(background_holdem);
 
                 // Create and shuffle deck
@@ -1114,6 +1142,7 @@ int main()
                     playerText.setPosition(1500, 405);
                     window.draw(playerText);
 
+
                     window.draw(opt1);
                     window.draw(opt2);
                     window.draw(opt1_text);
@@ -1130,7 +1159,7 @@ int main()
 
                         if (current_player < 3)
                         {
-                            fold_or_not.setString("Player " + to_string(current_player + 1) + ", do you want to fold?");
+                            fold_or_not.setString("FOLDING: Player " + to_string(current_player + 1) + ", do you want to fold?");
                             window.draw(fold_or_not);
 
                             if (event.type == sf::Event::MouseButtonPressed &&
@@ -1149,12 +1178,14 @@ int main()
                                     activePlayers[current_player] = false;
                                     current_player++;
                                     waitingForNextClick = false; // clicking flag to avoid accident redundancy
+                                    press_button_sound.play();
                                 }
                                 else if (opt2.getGlobalBounds().contains(mousePosFloat))
                                 {
                                     // std::cout << "Player " << current_player + 1 << " pick\n";
                                     current_player++;
                                     waitingForNextClick = false;
+                                    press_button_sound.play();
                                 }
                             }
                             else if (event.type == sf::Event::MouseButtonReleased)
@@ -1181,7 +1212,7 @@ int main()
 
                 else if (holdemStage == FLOP)
                 {
-
+                   
                     // Display bottom player cards (Player 1)
                     float bottomCardSpacing = 30.f;
                     float cardWidth = 125 * 0.25;    // 125 is the card image width
@@ -1335,7 +1366,7 @@ int main()
 
                         if (current_player < 3)
                         {
-                            fold_or_not.setString("Player " + to_string(current_player + 1) + ", do you want to fold?");
+                            fold_or_not.setString("FLOP: Player " + to_string(current_player + 1) + ", do you want to fold?");
                             window.draw(fold_or_not);
 
                             if (event.type == sf::Event::MouseButtonPressed &&
@@ -1354,12 +1385,14 @@ int main()
                                     activePlayers[current_player] = false;
                                     current_player++;
                                     waitingForNextClick = false; // clicking flag to avoid accident redundancy
+                                    press_button_sound.play();
                                 }
                                 else if (opt2.getGlobalBounds().contains(mousePosFloat))
                                 {
                                     // std::cout << "Player " << current_player + 1 << " pick\n";
                                     current_player++;
                                     waitingForNextClick = false;
+                                    press_button_sound.play();
                                 }
                             }
                             else if (event.type == sf::Event::MouseButtonReleased)
@@ -1539,7 +1572,7 @@ int main()
 
                         if (current_player < 3)
                         {
-                            fold_or_not.setString("Player " + to_string(current_player + 1) + ", do you want to fold?");
+                            fold_or_not.setString("TURN: Player " + to_string(current_player + 1) + ", do you want to fold?");
                             window.draw(fold_or_not);
 
                             if (event.type == sf::Event::MouseButtonPressed &&
@@ -1558,12 +1591,14 @@ int main()
                                     activePlayers[current_player] = false;
                                     current_player++;
                                     waitingForNextClick = false; // clicking flag to avoid accident redundancy
+                                    press_button_sound.play();
                                 }
                                 else if (opt2.getGlobalBounds().contains(mousePosFloat))
                                 {
                                     // std::cout << "Player " << current_player + 1 << " pick\n";
                                     current_player++;
                                     waitingForNextClick = false;
+                                    press_button_sound.play();
                                 }
                             }
                             else if (event.type == sf::Event::MouseButtonReleased)
@@ -1738,7 +1773,7 @@ int main()
 
                         if (current_player < 3)
                         {
-                            fold_or_not.setString("Player " + to_string(current_player + 1) + ", do you want to fold?");
+                            fold_or_not.setString("RIVER: Player " + to_string(current_player + 1) + ", do you want to fold?");
                             window.draw(fold_or_not);
 
                             if (event.type == sf::Event::MouseButtonPressed &&
@@ -1757,12 +1792,14 @@ int main()
                                     activePlayers[current_player] = false;
                                     current_player++;
                                     waitingForNextClick = false; // clicking flag to avoid accident redundancy
+                                    press_button_sound.play();
                                 }
                                 else if (opt2.getGlobalBounds().contains(mousePosFloat))
                                 {
                                     // std::cout << "Player " << current_player + 1 << " pick\n";
                                     current_player++;
                                     waitingForNextClick = false;
+                                    press_button_sound.play();
                                 }
                             }
                             else if (event.type == sf::Event::MouseButtonReleased)
@@ -1791,8 +1828,8 @@ int main()
 
                     sf::Text Holdem_res;
                     Holdem_res.setFont(font);
-                    Holdem_res.setPosition(80, 815);
-                    Holdem_res.setCharacterSize(60);
+                    Holdem_res.setPosition(500, 385);
+                    Holdem_res.setCharacterSize(46);
                     Holdem_res.setFillColor(sf::Color::Red);
 
                     string holdem_result = compareHands(playerHands, activePlayers);
@@ -1843,7 +1880,8 @@ int main()
                                         current_player = 0;
                                         playerHands.clear();
 
-                                        game_mode_1.stop();
+                                        /*game_mode_1.stop();*/
+                                        game_mode_3.stop();
                                         press_button_sound.play();
                                         music_entry.play();
                                     }
@@ -1860,9 +1898,9 @@ int main()
                                         current_player = 0;
                                         playerHands.clear();
 
-                                        game_mode_1.stop();
+                                        /*game_mode_1.stop();*/
                                         press_button_sound.play();
-                                        music_entry.play();
+                                        /*music_entry.play();*/
                                     }
                                 }
                             }
