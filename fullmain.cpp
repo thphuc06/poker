@@ -388,6 +388,9 @@ int main()
     Hand3 communityCards;
     bool waitingForNextClick = true;
 
+    vector<bool>showcard {true, false, false}; //this will determine which card will be show each turn for hiding other hands'card
+    int cntcheck = 0;
+    bool check_hide_card = false;
     //
     sf::Text fold_or_not;
     fold_or_not.setFont(font);
@@ -1031,6 +1034,11 @@ int main()
 
                         window.draw(card_display);
 
+                        if (!showcard[0]) {
+                            poker_back_card.setPosition(posX, posY);
+                            window.draw(poker_back_card);
+                        }
+
                         if (!activePlayers[0])
                         {
                             poker_back_card.setPosition(posX, posY);
@@ -1058,6 +1066,12 @@ int main()
                         card_display.setRotation(90); // Rotate cards for left player
                         window.draw(card_display);
 
+                        if (!showcard[1]) {
+                            poker_back_card.setPosition(posX, posY);
+                            poker_back_card.setRotation(90);
+                            window.draw(poker_back_card);
+                        }
+                        poker_back_card.setRotation(0);
                         if (!activePlayers[1])
                         {
                             poker_back_card.setPosition(posX, posY);
@@ -1087,6 +1101,12 @@ int main()
                         card_display.setRotation(-90); // Rotate cards for right player
                         window.draw(card_display);
 
+                        if (!showcard[2]) {
+                            poker_back_card.setPosition(posX, posY);
+                            poker_back_card.setRotation(-90);
+                            window.draw(poker_back_card);
+                        }
+                        poker_back_card.setRotation(0);
                         if (!activePlayers[2])
                         {
                             poker_back_card.setPosition(posX, posY);
@@ -1179,6 +1199,7 @@ int main()
                                     current_player++;
                                     waitingForNextClick = false; // clicking flag to avoid accident redundancy
                                     press_button_sound.play();
+                                    check_hide_card = true;
                                 }
                                 else if (opt2.getGlobalBounds().contains(mousePosFloat))
                                 {
@@ -1186,6 +1207,15 @@ int main()
                                     current_player++;
                                     waitingForNextClick = false;
                                     press_button_sound.play();
+                                    check_hide_card = true;
+                                }
+
+                                if (check_hide_card) {
+                                    switch (cntcheck) {
+                                        case 0: showcard = { false, true, false }; cntcheck++; break;
+                                        case 1: showcard = { false, false, true }; cntcheck++; break;
+                                        case 2: showcard = { true, false, false }; cntcheck++; break;
+                                    }
                                 }
                             }
                             else if (event.type == sf::Event::MouseButtonReleased)
@@ -1201,7 +1231,7 @@ int main()
                         //     cout << "P" << i + 1 << ":" << (activePlayers[i] ? "continue " : "fold ");
                         // }
                         // cout << "\n";
-
+                        cntcheck = 0;
                         holdemStage = FLOP;
                         current_player = 0;
                     }
@@ -1237,6 +1267,11 @@ int main()
 
                         window.draw(card_display);
 
+                        if (!showcard[0]) {
+                            poker_back_card.setPosition(posX, posY);
+                            window.draw(poker_back_card);
+                        }
+
                         if (!activePlayers[0])
                         {
                             poker_back_card.setPosition(posX, posY);
@@ -1264,6 +1299,12 @@ int main()
                         card_display.setRotation(90); // Rotate cards for left player
                         window.draw(card_display);
 
+                        if (!showcard[1]) {
+                            poker_back_card.setPosition(posX, posY);
+                            poker_back_card.setRotation(90);
+                            window.draw(poker_back_card);
+                        }
+                        poker_back_card.setRotation(0);
                         if (!activePlayers[1])
                         {
                             poker_back_card.setPosition(posX, posY);
@@ -1293,6 +1334,12 @@ int main()
                         card_display.setRotation(-90); // Rotate cards for right player
                         window.draw(card_display);
 
+                        if (!showcard[2]) {
+                            poker_back_card.setPosition(posX, posY);
+                            poker_back_card.setRotation(-90);
+                            window.draw(poker_back_card);
+                        }
+                        poker_back_card.setRotation(0);
                         if (!activePlayers[2])
                         {
                             poker_back_card.setPosition(posX, posY);
@@ -1386,6 +1433,7 @@ int main()
                                     current_player++;
                                     waitingForNextClick = false; // clicking flag to avoid accident redundancy
                                     press_button_sound.play();
+                                    check_hide_card = true;
                                 }
                                 else if (opt2.getGlobalBounds().contains(mousePosFloat))
                                 {
@@ -1393,6 +1441,15 @@ int main()
                                     current_player++;
                                     waitingForNextClick = false;
                                     press_button_sound.play();
+                                    check_hide_card = true;
+                                }
+
+                                if (check_hide_card) {
+                                    switch (cntcheck) {
+                                    case 0: showcard = { false, true, false }; cntcheck++; break;
+                                    case 1: showcard = { false, false, true }; cntcheck++; break;
+                                    case 2: showcard = { true, false, false }; cntcheck++; break;
+                                    }
                                 }
                             }
                             else if (event.type == sf::Event::MouseButtonReleased)
@@ -1408,7 +1465,7 @@ int main()
                         //     cout << "P" << i + 1 << ":" << (activePlayers[i] ? "continue " : "fold ");
                         // }
                         // cout << "\n";
-
+                        cntcheck = 0;
                         holdemStage = TURN;
                         current_player = 0;
                     }
@@ -1443,6 +1500,11 @@ int main()
 
                         window.draw(card_display);
 
+                        if (!showcard[0]) {
+                            poker_back_card.setPosition(posX, posY);
+                            window.draw(poker_back_card);
+                        }
+
                         if (!activePlayers[0])
                         {
                             poker_back_card.setPosition(posX, posY);
@@ -1468,8 +1530,15 @@ int main()
                         float posY = 440 + (bottomCardSpacing + cardWidth) * i;
                         card_display.setPosition(posX, posY);
                         card_display.setRotation(90); // Rotate cards for left player
+
                         window.draw(card_display);
 
+                        if (!showcard[1]) {
+                            poker_back_card.setPosition(posX, posY);
+                            poker_back_card.setRotation(90);
+                            window.draw(poker_back_card);
+                        }
+                        poker_back_card.setRotation(0);
                         if (!activePlayers[1])
                         {
                             poker_back_card.setPosition(posX, posY);
@@ -1497,8 +1566,15 @@ int main()
                         float posY = 590 + (cardHeight + bottomCardSpacing) * i;
                         card_display.setPosition(posX, posY);
                         card_display.setRotation(-90); // Rotate cards for right player
+
                         window.draw(card_display);
 
+                        if (!showcard[2]) {
+                            poker_back_card.setPosition(posX, posY);
+                            poker_back_card.setRotation(-90);
+                            window.draw(poker_back_card);
+                        }
+                        poker_back_card.setRotation(0);
                         if (!activePlayers[2])
                         {
                             poker_back_card.setPosition(posX, posY);
@@ -1592,6 +1668,7 @@ int main()
                                     current_player++;
                                     waitingForNextClick = false; // clicking flag to avoid accident redundancy
                                     press_button_sound.play();
+                                    check_hide_card = true;
                                 }
                                 else if (opt2.getGlobalBounds().contains(mousePosFloat))
                                 {
@@ -1599,6 +1676,15 @@ int main()
                                     current_player++;
                                     waitingForNextClick = false;
                                     press_button_sound.play();
+                                    check_hide_card = true;
+                                }
+
+                                if (check_hide_card) {
+                                    switch (cntcheck) {
+                                    case 0: showcard = { false, true, false }; cntcheck++; break;
+                                    case 1: showcard = { false, false, true }; cntcheck++; break;
+                                    case 2: showcard = { true, false, false }; cntcheck++; break;
+                                    }
                                 }
                             }
                             else if (event.type == sf::Event::MouseButtonReleased)
@@ -1615,6 +1701,7 @@ int main()
                         // }
                         // cout << "\n";
 
+                        cntcheck = 0;
                         holdemStage = RIVER;
                         current_player = 0;
                     }
@@ -1649,6 +1736,11 @@ int main()
 
                         window.draw(card_display);
 
+                        if (!showcard[0]) {
+                            poker_back_card.setPosition(posX, posY);
+                            window.draw(poker_back_card);
+                        }
+
                         if (!activePlayers[0])
                         {
                             poker_back_card.setPosition(posX, posY);
@@ -1674,8 +1766,15 @@ int main()
                         float posY = 440 + (bottomCardSpacing + cardWidth) * i;
                         card_display.setPosition(posX, posY);
                         card_display.setRotation(90); // Rotate cards for left player
+
                         window.draw(card_display);
 
+                        if (!showcard[1]) {
+                            poker_back_card.setPosition(posX, posY);
+                            poker_back_card.setRotation(90);
+                            window.draw(poker_back_card);
+                        }
+                        poker_back_card.setRotation(0);
                         if (!activePlayers[1])
                         {
                             poker_back_card.setPosition(posX, posY);
@@ -1703,8 +1802,15 @@ int main()
                         float posY = 590 + (cardHeight + bottomCardSpacing) * i;
                         card_display.setPosition(posX, posY);
                         card_display.setRotation(-90); // Rotate cards for right player
+
                         window.draw(card_display);
 
+                        if (!showcard[2]) {
+                            poker_back_card.setPosition(posX, posY);
+                            poker_back_card.setRotation(-90);
+                            window.draw(poker_back_card);
+                        }
+                        poker_back_card.setRotation(0);
                         if (!activePlayers[2])
                         {
                             poker_back_card.setPosition(posX, posY);
@@ -1793,6 +1899,7 @@ int main()
                                     current_player++;
                                     waitingForNextClick = false; // clicking flag to avoid accident redundancy
                                     press_button_sound.play();
+                                    check_hide_card = true;
                                 }
                                 else if (opt2.getGlobalBounds().contains(mousePosFloat))
                                 {
@@ -1800,6 +1907,15 @@ int main()
                                     current_player++;
                                     waitingForNextClick = false;
                                     press_button_sound.play();
+                                    check_hide_card = true;
+                                }
+
+                                if (check_hide_card) {
+                                    switch (cntcheck) {
+                                    case 0: showcard = { false, true, false }; cntcheck++; break;
+                                    case 1: showcard = { false, false, true }; cntcheck++; break;
+                                    case 2: showcard = { true, false, false }; cntcheck++; break;
+                                    }
                                 }
                             }
                             else if (event.type == sf::Event::MouseButtonReleased)
@@ -1816,6 +1932,7 @@ int main()
                         // }
                         // cout << "\n";
 
+                        cntcheck = 0;
                         holdemStage = SHOWDOWN;
                         current_player = 0;
                     }
@@ -1824,11 +1941,145 @@ int main()
                     continue;
                 }
                 else if (holdemStage == SHOWDOWN)
-                {
+                {   
+
+                    // Display bottom player cards (Player 1)
+                    float bottomCardSpacing = 30.f;
+                    float cardWidth = 125 * 0.25;    // 125 is the card image width
+                    float cardHeight = 181.5 * 0.25; // 181.5 is the card image height
+
+                    for (int i = 0; i < 2; i++)
+                    {
+                        string textFile = "cardpacks/" + playerHands[0][i].Rank + "_of_" + Suit_name[playerHands[0][i].suit_name] + ".png";
+                        sf::Texture card_pick;
+                        if (!card_pick.loadFromFile(textFile))
+                        {
+                            cout << "Failed to load file: " << textFile << endl;
+                            continue;
+                        }
+                        sf::Sprite card_display(card_pick);
+                        card_display.setScale(0.3, 0.3);
+
+                        // Position at bottom center
+                        float posX = 730 + (cardWidth + bottomCardSpacing) * i;
+                        float posY = 740;
+                        card_display.setPosition(posX, posY);
+
+                        window.draw(card_display);
+
+                        if (!activePlayers[0])
+                        {
+                            poker_back_card.setPosition(posX, posY);
+                            window.draw(poker_back_card);
+                        }
+                    }
+
+                    // Display left player cards (Player 2)
+                    for (int i = 0; i < 2; i++)
+                    {
+                        string textFile = "cardpacks/" + playerHands[1][i].Rank + "_of_" + Suit_name[playerHands[1][i].suit_name] + ".png";
+                        sf::Texture card_pick;
+                        if (!card_pick.loadFromFile(textFile))
+                        {
+                            cout << "Failed to load file: " << textFile << endl;
+                            continue;
+                        }
+                        sf::Sprite card_display(card_pick);
+                        card_display.setScale(0.3, 0.3);
+
+                        // Position at left center
+                        float posX = 250;
+                        float posY = 440 + (bottomCardSpacing + cardWidth) * i;
+                        card_display.setPosition(posX, posY);
+                        card_display.setRotation(90); // Rotate cards for left player
+
+                        window.draw(card_display);
+
+                        if (!activePlayers[1])
+                        {
+                            poker_back_card.setPosition(posX, posY);
+                            poker_back_card.setRotation(90);
+                            window.draw(poker_back_card);
+                        }
+                        poker_back_card.setRotation(0); // reset rotation
+                    }
+
+                    // Display right player cards (Player 3)
+                    for (int i = 0; i < 2; i++)
+                    {
+                        string textFile = "cardpacks/" + playerHands[2][i].Rank + "_of_" + Suit_name[playerHands[2][i].suit_name] + ".png";
+                        sf::Texture card_pick;
+                        if (!card_pick.loadFromFile(textFile))
+                        {
+                            cout << "Failed to load file: " << textFile << endl;
+                            continue;
+                        }
+                        sf::Sprite card_display(card_pick);
+                        card_display.setScale(0.3, 0.3);
+
+                        // Position at right center
+                        float posX = 1360;
+                        float posY = 590 + (cardHeight + bottomCardSpacing) * i;
+                        card_display.setPosition(posX, posY);
+                        card_display.setRotation(-90); // Rotate cards for right player
+
+                        window.draw(card_display);
+
+                        if (!activePlayers[2])
+                        {
+                            poker_back_card.setPosition(posX, posY);
+                            poker_back_card.setRotation(-90);
+                            window.draw(poker_back_card);
+                        }
+                        poker_back_card.setRotation(0); // reset rotation
+                    }
+
+                    // Display community cards in the middle
+                    float communityCardSpacing = 30.f;
+                    for (int i = 0; i < 5; i++)
+                    {
+                        string textFile = "cardpacks/" + communityCards[i].Rank + "_of_" + Suit_name[communityCards[i].suit_name] + ".png";
+                        sf::Texture card_pick;
+                        if (!card_pick.loadFromFile(textFile))
+                        {
+                            cout << "Failed to load file: " << textFile << endl;
+                            continue;
+                        }
+                        sf::Sprite card_display(card_pick);
+                        card_display.setScale(0.3, 0.3);
+
+                        // Position in center of screen
+                        float posX = 600 + (cardWidth + bottomCardSpacing) * i;
+                        float posY = 300;
+                        card_display.setPosition(posX, posY);
+
+                        window.draw(card_display);
+                    }
+
+                    // Draw player labels
+                    sf::Text playerText;
+                    playerText.setFont(font);
+                    playerText.setCharacterSize(24);
+                    playerText.setFillColor(sf::Color::Red);
+
+                    // Bottom player
+                    playerText.setString("Player 1");
+                    playerText.setPosition(600, 750);
+                    window.draw(playerText);
+
+                    // Left player
+                    playerText.setString("Player 2");
+                    playerText.setPosition(20, 405);
+                    window.draw(playerText);
+
+                    // Right player
+                    playerText.setString("Player 3");
+                    playerText.setPosition(1500, 405);
+                    window.draw(playerText);
 
                     sf::Text Holdem_res;
                     Holdem_res.setFont(font);
-                    Holdem_res.setPosition(500, 385);
+                    Holdem_res.setPosition(505, 105);
                     Holdem_res.setCharacterSize(46);
                     Holdem_res.setFillColor(sf::Color::Red);
 
@@ -1879,6 +2130,8 @@ int main()
                                         activePlayers = { true, true, true };
                                         current_player = 0;
                                         playerHands.clear();
+                                        showcard = { true, false, false };
+                                        cntcheck = 0;
 
                                         /*game_mode_1.stop();*/
                                         game_mode_3.stop();
@@ -1897,6 +2150,8 @@ int main()
                                         activePlayers = { true, true, true };
                                         current_player = 0;
                                         playerHands.clear();
+                                        showcard = { true, false, false };
+                                        cntcheck = 0;
 
                                         /*game_mode_1.stop();*/
                                         press_button_sound.play();
